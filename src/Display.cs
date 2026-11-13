@@ -88,6 +88,14 @@ namespace ForcedUpscaling
             return null;
         }
 
+        // where the monitor sits on the desktop, used to order the monitor list
+        public static int PositionX(string device)
+        {
+            DevMode dm = NewDevMode();
+            EnumDisplaySettingsW(device, CurrentSettings, ref dm);
+            return dm.dmPositionX;
+        }
+
         // what the monitor is doing right now
         public static VideoMode Current(string device)
         {

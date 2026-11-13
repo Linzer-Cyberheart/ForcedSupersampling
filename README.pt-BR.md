@@ -40,7 +40,7 @@ Fiz para o OneeChanbara Origin. O arquivo de configuração dele tem a opção 3
 
 - Um clique pela bandeja ou pela janela, sem instalação, um único `.exe`
 - Funciona com qualquer jogo que renderize no tamanho da área de trabalho (modo sem borda e em janela)
-- Vários monitores: só o monitor principal muda, os outros mantêm a resolução
+- Vários monitores: você escolhe qual usar, os outros mantêm a resolução
 - Escolha a resolução (1.50x, 2.00x, 4.00x, o que o seu driver oferecer)
 - Controla a escala do Windows enquanto está ligado, assim jogos antigos que não entendem DPI recebem a resolução real
 - Tudo é temporário. Nada é gravado no registro e reiniciar sempre devolve o monitor ao normal
@@ -70,7 +70,7 @@ Se o app mostrar "Nenhuma resolução DSR disponível", falta esse passo.
 ## Como usar
 
 - Dê dois cliques no ícone da bandeja para ligar ou desligar, ou clique com o botão direito para ver o menu
-- A janela tem os mesmos controles, mais a resolução, a escala do Windows e o idioma
+- A janela tem os mesmos controles, mais o monitor, a resolução, a escala do Windows e o idioma
 - Ligue **antes** de abrir o jogo. Jogos que usam o tamanho da área de trabalho leem esse valor quando abrem
 - Desligue quando terminar. Fechar o app também desliga
 
@@ -82,7 +82,7 @@ Sobre a escala do Windows: em 3840 x 2160 o Windows costuma escolher 150%. Jogos
 No meu PC (Windows 11, GTX 1660) o modo 4K do DSR aparecia em todo lugar, mas o Windows recusava aplicar qualquer um: a tela piscava e voltava. Desmarcar todos os fatores DSR no Painel da NVIDIA, aplicar e marcar de novo resolveu na hora. Vi relatos parecidos depois de atualizações grandes do Windows, então vale tentar.
 
 **A tela ficou presa na resolução alta**
-Desligue pela bandeja ou execute `scripts/reset-display.bat`. Reiniciar o PC também resolve.
+Desligue pela bandeja ou execute `scripts/reset-display.bat`. Reiniciar o PC também resolve. Se não tiver certeza de qual monitor foi afetado, veja a linha Monitor na janela.
 
 **Não vejo o ícone na bandeja**
 O Windows 11 esconde ícones novos atrás da setinha. Arraste para fora, ou vá em Configurações, Personalização, Barra de tarefas, Outros ícones da bandeja.
@@ -98,8 +98,8 @@ A maioria dos jogos em tela cheia exclusiva lista as resoluções DSR no própri
 **Vai custar desempenho?**
 Vai. 3840 x 2160 tem quatro vezes os pixels de 1920 x 1080, então a placa trabalha bem mais. Se o 4K pesar demais, teste 1.50x ou 2.00x.
 
-**E o meu segundo monitor?**
-Ele mantém a resolução. Enquanto o monitor principal está no modo maior, o Windows pode colocar o segundo mais para a direita, e ele volta quando você desliga.
+**E os meus outros monitores?**
+Só o monitor que você escolher na janela (ou no menu da bandeja) muda. Os outros mantêm a resolução. Enquanto um monitor está no modo maior, o Windows pode posicionar os vizinhos de um jeito um pouco diferente, e eles voltam quando você desliga.
 
 **AMD ou Intel?**
 O app pede ao Windows qualquer resolução maior que a atual com a mesma proporção, então o que o seu driver listar aparece, inclusive o VSR da AMD. Só testei em NVIDIA, então não prometo nada.

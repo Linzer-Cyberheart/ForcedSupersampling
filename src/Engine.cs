@@ -23,7 +23,7 @@ namespace ForcedUpscaling
         readonly Settings settings;
         readonly SynchronizationContext ui;
         readonly System.Windows.Forms.Timer poll = new System.Windows.Forms.Timer();
-        readonly string device;
+        string device;
         bool busy;
         string lastState = "";
 
@@ -38,7 +38,7 @@ namespace ForcedUpscaling
                 SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
             ui = SynchronizationContext.Current;
 
-            device = Display.Primary();
+            device = PickDevice(settings.Get("monitor", ""));
             Width = settings.GetInt("w", 3840);
             Height = settings.GetInt("h", 2160);
             ScalePercent = settings.GetInt("scalePct", 100);
@@ -58,6 +58,18 @@ namespace ForcedUpscaling
 
         public bool HasDisplay { get { return device != null; } }
         public bool Busy { get { return busy; } }
+        public string Device { get { return device; } }
+
+        public List<MonitorInfo> Monitors() { return DisplayConfig.Monitors(); }
+
+        // the monitor we used last time, or the primary one if it's gone
+        static string PickDevice(string wanted)
+        {
+            if (wanted != "")
+                foreach (MonitorInfo m in DisplayConfig.Monitors())
+                    if (m.Device == wanted) return wanted;
+            return Display.Primary();
+        }
 
         public VideoMode Now { get { return Display.Current(device); } }
         public VideoMode Saved { get { return Display.Saved(device); } }
@@ -77,7 +89,7 @@ namespace ForcedUpscaling
         {
             if (device == null) return "none";
             VideoMode now = Display.Current(device);
-            return now.Width + "x" + now.Height + "@" + now.Hz;
+            return device + ":" + now.Width + "x" + now.Height + "@" + now.Hz;
         }
 
         // DSR resolutions on offer. Falls back to the biggest one if the stored
@@ -136,6 +148,29 @@ namespace ForcedUpscaling
             Raise();
         }
 
+        // Switching monitors turns the mode off on the old one first. It does
+        // not turn it on for the new one, that stays up to the user.
+        public void SetMonitor(string name)
+        {
+            if (name == device || busy) return;
+            if (IsOn)
+                Run(delegate
+                {
+                    DoTurnOff(false);
+                    ui.Post(delegate { ChooseMonitor(name); }, null);
+                });
+            else
+                ChooseMonitor(name);
+        }
+
+        void ChooseMonitor(string name)
+        {
+            device = name;
+            settings.Set("monitor", name);
+            lastState = StateKey();
+            Raise();
+        }
+
         public void SetLanguage(string code)
         {
             Loc.Set(code);
@@ -158,7 +193,7 @@ namespace ForcedUpscaling
         {
             VideoMode saved = Display.Saved(device);
             int min, current, max;
-            bool canScale = DpiScale.TryGet(device, out min, out current, out max);
+            bool canScale = DisplayConfig.TryGetScale(device, out min, out current, out max);
 
             int code = Display.Apply(device, Width, Height, saved.Hz);
             if (code != 0)
@@ -168,7 +203,11 @@ namespace ForcedUpscaling
             }
 
             Thread.Sleep(SettleMs);
-            if (canScale) settings.Set("pendingDpi", current.ToString());
+            if (canScale)
+            {
+                settings.Set("pendingDpi", current.ToString());
+                settings.Set("pendingDevice", device);
+            }
             if (ScalePercent != 0) ApplyScale();
             Tell(Loc.T("on_title"), Loc.F("on_text", Width, Height), false);
         }
@@ -188,8 +227,8 @@ namespace ForcedUpscaling
         void ApplyScale()
         {
             int min, current, max;
-            if (!DpiScale.TryGet(device, out min, out current, out max)) return;
-            DpiScale.Set(device, ScalePercent == 0 ? 0 : RelativeStep(ScalePercent, min, max));
+            if (!DisplayConfig.TryGetScale(device, out min, out current, out max)) return;
+            DisplayConfig.SetScale(device, ScalePercent == 0 ? 0 : RelativeStep(ScalePercent, min, max));
         }
 
         // Windows counts steps from the recommended scale; the lowest step is 100%.
@@ -207,8 +246,10 @@ namespace ForcedUpscaling
             int relative;
             if (stored != "" && int.TryParse(stored, out relative))
             {
-                DpiScale.Set(device, relative);
+                // put it back on the monitor we changed, even if another one is selected now
+                DisplayConfig.SetScale(settings.Get("pendingDevice", device), relative);
                 settings.Remove("pendingDpi");
+                settings.Remove("pendingDevice");
             }
         }
 

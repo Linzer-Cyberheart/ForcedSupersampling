@@ -26,7 +26,7 @@ namespace ForcedUpscaling
         readonly Icon iconOn;
         readonly Icon iconOff;
 
-        ToolStripMenuItem miOpen, miInfo, miToggle, miRes, miScale, miAuto, miSupport, miExit;
+        ToolStripMenuItem miOpen, miInfo, miToggle, miMonitor, miRes, miScale, miAuto, miSupport, miExit;
         MainWindow window;
 
         public TrayApp(Settings settings, EventWaitHandle openSignal, bool showWindow)
@@ -79,6 +79,7 @@ namespace ForcedUpscaling
             miToggle = new ToolStripMenuItem();
             miToggle.Click += delegate { engine.Toggle(); };
 
+            miMonitor = new ToolStripMenuItem();
             miRes = new ToolStripMenuItem();
             miScale = new ToolStripMenuItem();
 
@@ -94,7 +95,7 @@ namespace ForcedUpscaling
             menu.Items.AddRange(new ToolStripItem[]
             {
                 miOpen, new ToolStripSeparator(),
-                miInfo, miToggle, miRes, miScale, new ToolStripSeparator(),
+                miInfo, miToggle, miMonitor, miRes, miScale, new ToolStripSeparator(),
                 miAuto, miSupport, new ToolStripSeparator(),
                 miExit
             });
@@ -106,7 +107,8 @@ namespace ForcedUpscaling
         void RefreshMenu()
         {
             miOpen.Text = Loc.T("open");
-            miRes.Text = Loc.T("monitor_res");
+            miMonitor.Text = Loc.T("monitor");
+            miRes.Text = Loc.T("res");
             miScale.Text = Loc.T("scale");
             miAuto.Text = Loc.T("autostart");
             miSupport.Text = Loc.T("support");
@@ -123,6 +125,18 @@ namespace ForcedUpscaling
             miToggle.Checked = on;
             miToggle.Text = on ? Loc.T("disable") : Loc.T("enable");
             miToggle.Enabled = engine.HasDisplay && !engine.Busy;
+
+            miMonitor.DropDownItems.Clear();
+            System.Collections.Generic.List<MonitorInfo> monitors = engine.Monitors();
+            for (int i = 0; i < monitors.Count; i++)
+            {
+                MonitorInfo mon = monitors[i];
+                string label = (i + 1) + "  " + mon.Name + (mon.Primary ? "  (" + Loc.T("primary") + ")" : "");
+                ToolStripMenuItem item = new ToolStripMenuItem(label);
+                item.Checked = mon.Device == engine.Device;
+                item.Click += delegate { engine.SetMonitor(mon.Device); };
+                miMonitor.DropDownItems.Add(item);
+            }
 
             miRes.DropDownItems.Clear();
             System.Collections.Generic.List<VideoMode> modes = engine.Modes();

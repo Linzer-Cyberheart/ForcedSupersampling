@@ -12,14 +12,14 @@ namespace ForcedUpscaling
     class MainWindow : Form
     {
         const int W = 384;
-        const int H = 490;
+        const int H = 534;
         const int PanelTop = 70;
         const int Pad = 24;
         const int CardTop = 130;
         const int CardHeight = 76;
         const int RowsTop = 230;
         const int RowGap = 44;
-        const int DividerY = 418;
+        const int DividerY = 462;
         const int LabelWidth = 146;
         const int SelectWidth = 186;
 
@@ -34,6 +34,7 @@ namespace ForcedUpscaling
         readonly SupportButton support;
         readonly ToggleSwitch power;
         readonly ToggleSwitch startup;
+        readonly SelectBox monitorBox;
         readonly SelectBox resBox;
         readonly SelectBox scaleBox;
         readonly SelectBox langBox;
@@ -46,6 +47,7 @@ namespace ForcedUpscaling
         readonly Icon iconOff;
 
         Font textFont, boldFont, bigFont, smallFont, supportFont;
+        List<MonitorInfo> monitors = new List<MonitorInfo>();
         List<VideoMode> modes = new List<VideoMode>();
         VideoMode now = new VideoMode();
         bool isOn;
@@ -81,12 +83,13 @@ namespace ForcedUpscaling
 
             startup = new ToggleSwitch(48, 26);
             startup.BackColor = Theme.Window;
-            startup.Location = new Point(W - Pad - 48, RowsTop + 3 * RowGap + 4);
+            startup.Location = new Point(W - Pad - 48, RowsTop + 4 * RowGap + 4);
             startup.Checked = Autostart.IsOn;
 
-            resBox = NewSelect(0);
-            scaleBox = NewSelect(1);
-            langBox = NewSelect(2);
+            monitorBox = NewSelect(0);
+            resBox = NewSelect(1);
+            scaleBox = NewSelect(2);
+            langBox = NewSelect(3);
 
             minButton = new CaptionButton(CaptionKind.Minimize);
             minButton.Location = new Point(W - 1 - 92, PanelTop + 3);
@@ -96,10 +99,15 @@ namespace ForcedUpscaling
             repoLink = new TextLink();
             byLink = new TextLink();
 
-            Controls.AddRange(new Control[] { minButton, closeButton, power, startup, resBox, scaleBox, langBox, support, repoLink, byLink, mascot });
+            Controls.AddRange(new Control[] { minButton, closeButton, power, startup, monitorBox, resBox, scaleBox, langBox, support, repoLink, byLink, mascot });
 
             power.UserToggled += delegate { engine.Toggle(); };
             startup.UserToggled += delegate { Autostart.Set(startup.Checked); };
+            monitorBox.SelectionChanged += delegate
+            {
+                int i = monitorBox.SelectedIndex;
+                if (i >= 0 && i < monitors.Count) engine.SetMonitor(monitors[i].Device);
+            };
             resBox.SelectionChanged += delegate
             {
                 int i = resBox.SelectedIndex;
@@ -153,7 +161,7 @@ namespace ForcedUpscaling
             smallFont = new Font(family, 9f);
             supportFont = new Font(family, 11f, FontStyle.Bold);
 
-            resBox.Font = scaleBox.Font = langBox.Font = textFont;
+            monitorBox.Font = resBox.Font = scaleBox.Font = langBox.Font = textFont;
             repoLink.Font = byLink.Font = smallFont;
             support.Font = supportFont;
 
@@ -161,19 +169,35 @@ namespace ForcedUpscaling
             support.Label = Loc.T("support").ToUpperInvariant();
             support.Location = new Point(Pad - 18, H - 1 - support.Height);
             repoLink.SetText("GitHub  ·  v" + App.Version);
-            repoLink.Location = new Point(W - Pad - repoLink.Width, 464);
+            repoLink.Location = new Point(W - Pad - repoLink.Width, DividerY + 46);
             byLink.SetText(Loc.T("by"));
-            byLink.Location = new Point(W - Pad - byLink.Width, 441);
+            byLink.Location = new Point(W - Pad - byLink.Width, DividerY + 23);
 
             tips.SetToolTip(minButton, Loc.T("minimize"));
             tips.SetToolTip(closeButton, Loc.T("close"));
 
             langBox.SetItems(Loc.Names, Array.IndexOf(Loc.Codes, Loc.Current));
+            FillMonitors();
             FillScale();
             FillResolutions();
 
             foreach (Font f in old) if (f != null) f.Dispose();
             Invalidate();
+        }
+
+        void FillMonitors()
+        {
+            monitors = engine.Monitors();
+            string[] items = new string[monitors.Count];
+            int selected = 0;
+            for (int i = 0; i < monitors.Count; i++)
+            {
+                MonitorInfo m = monitors[i];
+                items[i] = (i + 1) + "  " + m.Name + (m.Primary ? "  (" + Loc.T("primary") + ")" : "");
+                if (m.Device == engine.Device) selected = i;
+            }
+            monitorBox.SetItems(items, selected);
+            monitorBox.Enabled = !engine.Busy;
         }
 
         void FillResolutions()
@@ -219,6 +243,7 @@ namespace ForcedUpscaling
             power.Checked = isOn;
             power.Enabled = engine.HasDisplay && !engine.Busy;
             scaleBox.Enabled = !engine.Busy;
+            FillMonitors();
             FillResolutions();
 
             Icon = isOn ? iconOn : iconOff;
@@ -249,7 +274,7 @@ namespace ForcedUpscaling
             string info = engine.HasDisplay ? Loc.F("resolution", now.Width, now.Height, now.Hz) : Loc.T("no_monitor");
             TextRenderer.DrawText(g, info, smallFont, new Rectangle(card.X + 20, card.Y + 44, 232, 22), Theme.Muted, Gfx.Line);
 
-            string[] labels = { Loc.T("monitor_res"), Loc.T("scale"), Loc.T("language"), Loc.T("autostart") };
+            string[] labels = { Loc.T("monitor"), Loc.T("res"), Loc.T("scale"), Loc.T("language"), Loc.T("autostart") };
             for (int i = 0; i < labels.Length; i++)
                 TextRenderer.DrawText(g, labels[i], textFont, new Rectangle(Pad, RowsTop + i * RowGap, LabelWidth, 34), Theme.Text, Gfx.Line);
 

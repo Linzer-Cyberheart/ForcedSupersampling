@@ -40,7 +40,7 @@ I made it for OneeChanbara Origin. Its config file has a 3840 x 2160 option, but
 
 - One click from the tray icon or the window, no install, a single `.exe`
 - Works with any game that renders at the desktop size (borderless and windowed modes)
-- Multiple monitors: only your primary monitor changes, the others keep their resolution
+- Multiple monitors: you choose which one to use, the others keep their resolution
 - Pick the resolution you want (1.50x, 2.00x, 4.00x, whatever your driver offers)
 - Controls the Windows scale while it's on, so old games that don't understand DPI settings still get the real resolution
 - Everything is temporary. Nothing is written to the registry, and a reboot always brings your monitor back
@@ -70,7 +70,7 @@ If the app says "No DSR resolutions available", this is the step you're missing.
 ## Using it
 
 - Double-click the tray icon to turn it on or off, or right-click it for the menu
-- The window has the same controls plus the resolution, the Windows scale and the language
+- The window has the same controls plus the monitor, the resolution, the Windows scale and the language
 - Turn it on **before** you start the game. Games that take the desktop size read it when they open
 - Turn it off when you're done. Closing the app also turns it off
 
@@ -82,7 +82,7 @@ About the Windows scale: at 3840 x 2160 Windows usually picks 150%. Games that d
 On my machine (Windows 11, GTX 1660) the 4K DSR mode showed up everywhere but Windows refused to apply any of them, the screen would blink and go back. Unticking every DSR factor in the NVIDIA Control Panel, applying, and ticking them again fixed it immediately. I've seen similar reports after big Windows updates, so it's worth a try.
 
 **The screen is stuck at the high resolution**
-Turn it off from the tray, or run `scripts/reset-display.bat`. A reboot also fixes it.
+Turn it off from the tray, or run `scripts/reset-display.bat`. A reboot also fixes it. If you're not sure which monitor is affected, check the Monitor row in the window.
 
 **I can't see the tray icon**
 Windows 11 hides new tray icons behind the little arrow. Drag it out, or go to Settings, Personalization, Taskbar, Other system tray icons.
@@ -98,8 +98,8 @@ Most exclusive fullscreen games list the DSR resolutions in their own menu, so y
 **Will it cost me performance?**
 Yes. 3840 x 2160 is four times the pixels of 1920 x 1080, so the GPU has a lot more work. Try 1.50x or 2.00x if 4K is too heavy.
 
-**What happens to my second monitor?**
-It keeps its resolution. While the primary monitor is in the bigger mode, Windows may place the second one further to the right, and it goes back when you turn the mode off.
+**What happens to my other monitors?**
+Only the monitor you pick in the window (or the tray menu) changes. The others keep their resolution. While one monitor is in the bigger mode, Windows may place its neighbors a bit differently, and they go back when you turn the mode off.
 
 **AMD or Intel?**
 The app asks Windows for any resolution larger than your current one with the same aspect ratio, so anything your driver lists will show up, AMD's VSR included. I've only tested it on NVIDIA, so I can't promise anything.
