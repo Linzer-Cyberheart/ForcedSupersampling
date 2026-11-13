@@ -228,8 +228,7 @@ namespace ForcedUpscaling
             string[] items = new string[Engine.ScaleChoices.Length];
             for (int i = 0; i < items.Length; i++)
             {
-                int p = Engine.ScaleChoices[i];
-                items[i] = p == 0 ? Loc.T("scale_auto") : p + "%";
+                items[i] = Engine.ScaleLabel(Engine.ScaleChoices[i]);
             }
             scaleBox.SetItems(items, Array.IndexOf(Engine.ScaleChoices, engine.ScalePercent));
         }

@@ -160,8 +160,7 @@ namespace ForcedUpscaling
             foreach (int percent in Engine.ScaleChoices)
             {
                 int p = percent;
-                string text = p == 0 ? Loc.T("scale_auto") : p + "%";
-                ToolStripMenuItem item = new ToolStripMenuItem(text);
+                ToolStripMenuItem item = new ToolStripMenuItem(Engine.ScaleLabel(p));
                 item.Checked = p == engine.ScalePercent;
                 item.Click += delegate { engine.SetScale(p); };
                 miScale.DropDownItems.Add(item);

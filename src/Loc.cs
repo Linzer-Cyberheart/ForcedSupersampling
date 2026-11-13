@@ -23,6 +23,7 @@ namespace ForcedUpscaling
             { "res", new[] { "Resolution", "Resolução", "分辨率", "Resolución" } },
             { "scale", new[] { "Windows scale", "Escala do Windows", "Windows 缩放比例", "Escala de Windows" } },
             { "scale_auto", new[] { "Automatic", "Automática", "自动", "Automática" } },
+            { "recommended", new[] { "recommended", "recomendado", "推荐", "recomendado" } },
             { "autostart", new[] { "Start with Windows", "Iniciar com o Windows", "开机自动启动", "Iniciar con Windows" } },
             { "support", new[] { "Support", "Incentivar", "支持", "Apoyar" } },
             { "by", new[] { "By: iLinzer", "Por: iLinzer", "作者：iLinzer", "Por: iLinzer" } },

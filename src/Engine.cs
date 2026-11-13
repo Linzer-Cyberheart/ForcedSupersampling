@@ -107,6 +107,13 @@ namespace ForcedUpscaling
             return list;
         }
 
+        public static string ScaleLabel(int percent)
+        {
+            if (percent == 0) return Loc.T("scale_auto");
+            if (percent == 100) return "100%   (" + Loc.T("recommended") + ")";
+            return percent + "%";
+        }
+
         public static string Factor(VideoMode saved, VideoMode m)
         {
             double f = (double)m.Width * m.Height / ((double)saved.Width * saved.Height);
