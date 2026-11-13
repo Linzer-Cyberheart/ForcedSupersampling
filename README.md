@@ -126,7 +126,7 @@ Switching uses `ChangeDisplaySettingsEx` without the update-registry flag, so th
 
 ## Credits
 
-Made by [iLinzer](https://www.youtube.com/@iLinzer?sub_confirmation=1). The mascot and the icons are his artwork.
+Made by [iLinzer](https://www.youtube.com/@iLinzer?sub_confirmation=1). The mascot and the icons are my own artwork.
 
 If the app helped you, you can support the project at [picpay.me/ilinzer](https://picpay.me/ilinzer).
 

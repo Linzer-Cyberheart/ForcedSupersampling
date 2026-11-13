@@ -126,7 +126,7 @@ A troca usa `ChangeDisplaySettingsEx` sem a flag de atualizar o registro, então
 
 ## Créditos
 
-Feito por [iLinzer](https://www.youtube.com/@iLinzer?sub_confirmation=1). O mascote e os ícones são arte dele.
+Feito por [iLinzer](https://www.youtube.com/@iLinzer?sub_confirmation=1). O mascote e os ícones são arte minha.
 
 Se o app te ajudou, você pode apoiar o projeto em [picpay.me/ilinzer](https://picpay.me/ilinzer).
 
