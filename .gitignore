@@ -1,0 +1,5 @@
+bin/
+obj/
+*.log
+Thumbs.db
+desktop.ini

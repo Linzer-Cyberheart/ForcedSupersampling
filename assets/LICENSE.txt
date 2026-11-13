@@ -1,0 +1,8 @@
+The mascot animations (iLinzer_Sit.gif, iLinzer_Cavando.gif), the icons
+(fu_on.ico, fu_off.ico) and logo.png are artwork by iLinzer.
+
+Copyright (c) 2026 iLinzer. All rights reserved.
+
+They are in this repository so the app can be built and so you can run it.
+Please don't reuse them in other projects, and if you fork Forced Upscaling,
+swap them for your own artwork.
