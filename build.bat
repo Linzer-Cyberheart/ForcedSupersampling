@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-rem Builds bin\ForcedUpscaling.exe with the C# compiler that ships with Windows.
+rem Builds bin\ForcedSupersampling.exe with the C# compiler that ships with Windows.
 rem No Visual Studio or SDK needed.
 
 set CSC=%WINDIR%\Microsoft.NET\Framework64\v4.0.30319\csc.exe
@@ -13,7 +13,7 @@ if not exist "%CSC%" (
 if not exist bin mkdir bin
 
 "%CSC%" /nologo /target:winexe /optimize+ /codepage:65001 ^
-    /out:bin\ForcedUpscaling.exe ^
+    /out:bin\ForcedSupersampling.exe ^
     /win32icon:assets\fu_on.ico ^
     /reference:System.Windows.Forms.dll /reference:System.Drawing.dll ^
     /resource:assets\fu_on.ico,ForcedUpscaling.fu_on.ico ^
@@ -23,4 +23,4 @@ if not exist bin mkdir bin
     src\*.cs
 
 if errorlevel 1 exit /b 1
-echo Built bin\ForcedUpscaling.exe
+echo Built bin\ForcedSupersampling.exe

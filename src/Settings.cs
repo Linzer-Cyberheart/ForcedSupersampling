@@ -7,6 +7,8 @@ using System.Windows.Forms;
 namespace ForcedUpscaling
 {
     // Plain key=value file in %APPDATA%\ForcedUpscaling
+    // The app used to be called Forced Upscaling. The folder, the autostart entry and the
+    // internal names keep the old spelling so nobody loses their settings after updating.
     class Settings
     {
         readonly string path;
@@ -90,6 +92,30 @@ namespace ForcedUpscaling
                 using (RegistryKey k = Registry.CurrentUser.OpenSubKey(RunKey))
                     return k != null && k.GetValue(ValueName) != null;
             }
+        }
+
+        // If the autostart entry points to a file that is gone, or to an older name of this
+        // exe in the same folder (the app was renamed), point it at the running exe.
+        public static void Refresh()
+        {
+            try
+            {
+                using (RegistryKey k = Registry.CurrentUser.OpenSubKey(RunKey, true))
+                {
+                    string current = k == null ? null : k.GetValue(ValueName) as string;
+                    if (string.IsNullOrEmpty(current)) return;
+                    string registered = current.Trim();
+                    if (registered.StartsWith("\"")) registered = registered.Substring(1, Math.Max(0, registered.IndexOf('"', 1) - 1));
+                    else if (registered.EndsWith(" --background")) registered = registered.Substring(0, registered.Length - " --background".Length);
+
+                    string running = Application.ExecutablePath;
+                    if (string.Equals(registered, running, StringComparison.OrdinalIgnoreCase)) return;
+                    bool gone = !File.Exists(registered);
+                    bool sameFolder = string.Equals(Path.GetDirectoryName(registered), Path.GetDirectoryName(running), StringComparison.OrdinalIgnoreCase);
+                    if (gone || sameFolder) k.SetValue(ValueName, "\"" + running + "\" --background");
+                }
+            }
+            catch (Exception ex) { Log.Write(ex); }
         }
 
         public static void Set(bool on)

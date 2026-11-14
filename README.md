@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/logo.png" width="96" alt="Forced Upscaling logo">
+  <img src="assets/logo.png" width="96" alt="Forced Supersampling logo">
 </p>
 
-<h1 align="center">Forced Upscaling</h1>
+<h1 align="center">Forced Supersampling</h1>
 
 <p align="center">
   Make games render above your monitor's resolution with NVIDIA DSR, then let the GPU scale the picture back down.<br>
@@ -10,10 +10,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Linzer-Cyberheart/ForcedUpscaling/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/Linzer-Cyberheart/ForcedUpscaling"></a>
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/Linzer-Cyberheart/ForcedUpscaling"></a>
+  <a href="https://github.com/Linzer-Cyberheart/ForcedSupersampling/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/Linzer-Cyberheart/ForcedSupersampling"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/Linzer-Cyberheart/ForcedSupersampling"></a>
   <img alt="Windows" src="https://img.shields.io/badge/platform-Windows-0078D4">
-  <img alt="Downloads" src="https://img.shields.io/github/downloads/Linzer-Cyberheart/ForcedUpscaling/total">
+  <img alt="Downloads" src="https://img.shields.io/github/downloads/Linzer-Cyberheart/ForcedSupersampling/total">
 </p>
 
 <p align="center">
@@ -21,9 +21,15 @@
 </p>
 
 <p align="center">
-  <img src="docs/window-on.png" width="320" alt="Forced Upscaling window, turned on">
+  <img src="docs/compare/one-piece-pirate-warriors-3.jpg" width="880" alt="One Piece: Pirate Warriors 3, Forced Supersampling off on the left and on on the right">
+  <br>
+  <sub>One Piece: Pirate Warriors 3. Off on the left, on on the right. Just the program turned on, nothing specific to the game.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/window-on.png" width="320" alt="Forced Supersampling window, turned on">
   &nbsp;&nbsp;
-  <img src="docs/window-off.png" width="320" alt="Forced Upscaling window, turned off">
+  <img src="docs/window-off.png" width="320" alt="Forced Supersampling window, turned off">
 </p>
 
 ## What it does
@@ -32,15 +38,43 @@ A lot of PC games, mostly older ones and console ports, run in borderless window
 
 NVIDIA's DSR (Dynamic Super Resolution) lets Windows offer resolutions higher than your monitor can display, for example 3840 x 2160 on a 1080p screen. The GPU renders at that size and scales the result down to fit. That is supersampling: edges get smoother and fine detail gets cleaner, without touching the game's own settings.
 
-Forced Upscaling puts that behind a tray icon. Turn it on, start any game, turn it off when you're done.
+Forced Supersampling puts that behind a tray icon. Turn it on, start any game, turn it off when you're done.
 
 I made it for OneeChanbara Origin. Its config file has a 3840 x 2160 option, but in borderless mode the game ignores it and draws at your desktop size. With the desktop in 4K, the game finally renders in 4K.
+
+## More before and after
+
+Off on the left, on on the right, same spot in the game.
+
+<p align="center">
+  <img src="docs/compare/onechanbara-origin-1.jpg" width="880" alt="OneeChanbara Origin, off on the left and on on the right">
+  <br>
+  <sub>OneeChanbara Origin. Only the program turned on.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/compare/onechanbara-origin-2.jpg" width="880" alt="OneeChanbara Origin, off on the left and on on the right">
+  <br>
+  <sub>OneeChanbara Origin. Only the program turned on.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/compare/onechanbara-z2-chaos.jpg" width="880" alt="Onechanbara Z2: Chaos, off on the left and on on the right">
+  <br>
+  <sub>Onechanbara Z2: Chaos, with the "Internal resolution" setting.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/compare/dw8-empires.jpg" width="880" alt="Dynasty Warriors 8 Empires, off on the left and on on the right">
+  <br>
+  <sub>Dynasty Warriors 8 Empires, with its game fix.</sub>
+</p>
 
 ## Features
 
 - One click from the tray icon or the window, no install, a single `.exe`
 - Works with any game that renders at the desktop size (borderless and windowed modes)
-- Multiple monitors: you choose which one to use, the others keep their resolution
+- Works with more than one monitor: you choose which one to use, the others keep their resolution. On my PC Windows would not let me change the resolution with two monitors connected, and the app handles it
 - Pick the resolution you want (1.50x, 2.00x, 4.00x, whatever your driver offers)
 - Controls the Windows scale while it's on, so old games that don't understand DPI settings still get the real resolution
 - Everything is temporary. Nothing is written to the registry, and a reboot always brings your monitor back
@@ -50,9 +84,11 @@ I made it for OneeChanbara Origin. Its config file has a 3840 x 2160 option, but
 
 ## Download
 
-1. Get `ForcedUpscaling.exe` from the [latest release](https://github.com/Linzer-Cyberheart/ForcedUpscaling/releases/latest).
+1. Get `ForcedSupersampling.exe` from the [latest release](https://github.com/Linzer-Cyberheart/ForcedSupersampling/releases/latest).
 2. Put it in a folder you won't delete. If you turn on "Start with Windows" it launches from there.
 3. Run it. The window opens and an icon shows up in the tray.
+
+Forced Supersampling was called Forced Upscaling until version 1.2.0. It is the same app and your settings carry over. If you use "Start with Windows", the entry fixes itself the first time you open the new exe, and you can delete the old one.
 
 Windows SmartScreen may complain the first time, because the file isn't code signed. If you'd rather not trust a random exe, the source is short and `build.bat` builds it in a few seconds (see below).
 
@@ -107,7 +143,7 @@ Most exclusive fullscreen games list the DSR resolutions in their own menu, so y
 Yes. 3840 x 2160 is four times the pixels of 1920 x 1080, so the GPU has a lot more work. Try 1.50x or 2.00x if 4K is too heavy.
 
 **What happens to my other monitors?**
-Only the monitor you pick in the window (or the tray menu) changes. The others keep their resolution. While one monitor is in the bigger mode, Windows may place its neighbors a bit differently, and they go back when you turn the mode off.
+Only the monitor you pick in the window (or the tray menu) changes. The others keep their resolution. This works with two monitors connected, which Windows itself refused to do on my PC. While one monitor is in the bigger mode, Windows may place its neighbors a bit differently, and they go back when you turn the mode off.
 
 **AMD or Intel?**
 The app asks Windows for any resolution larger than your current one with the same aspect ratio, so anything your driver lists will show up, AMD's VSR included. I've only tested it on NVIDIA, so I can't promise anything.
@@ -126,7 +162,7 @@ You only need Windows. The C# compiler that ships with .NET Framework 4 is enoug
 build.bat
 ```
 
-The result is `bin\ForcedUpscaling.exe`, with the icons and animations built into it.
+The result is `bin\ForcedSupersampling.exe`, with the icons and animations built into it.
 
 ## How it works
 

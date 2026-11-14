@@ -7,10 +7,10 @@ namespace ForcedUpscaling
 {
     static class App
     {
-        public const string Version = "1.2.0";
+        public const string Version = "1.2.1";
         public const string SupportUrl = "https://github.com/sponsors/Linzer-Cyberheart";
         public const string ChannelUrl = "https://www.youtube.com/@iLinzer?sub_confirmation=1";
-        public const string RepoUrl = "https://github.com/Linzer-Cyberheart/ForcedUpscaling";
+        public const string RepoUrl = "https://github.com/Linzer-Cyberheart/ForcedSupersampling";
 
         public static void Open(string url)
         {
@@ -42,6 +42,7 @@ namespace ForcedUpscaling
 
                 Settings settings = new Settings();
                 Loc.Set(settings.Get("lang", Loc.Detect()));
+                Autostart.Refresh();
 
                 // Started by Windows at logon: stay in the tray, don't open the window.
                 bool background = Array.IndexOf(args, "--background") >= 0;

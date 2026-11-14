@@ -70,7 +70,7 @@ namespace ForcedUpscaling
             TransparencyKey = Theme.Key;
             DoubleBuffered = true;
             ShowInTaskbar = true;
-            Text = "Forced Upscaling";
+            Text = "Forced Supersampling";
             iconOn = Icons.Load(true, 32);
             iconOff = Icons.Load(false, 32);
 
@@ -260,7 +260,8 @@ namespace ForcedUpscaling
             Font[] old = { textFont, boldFont, bigFont, smallFont, supportFont };
 
             textFont = new Font(family, 9.5f);
-            boldFont = new Font(family, 15f, FontStyle.Bold);
+            // the title is longer now, 13 keeps it clear of the minimize button
+            boldFont = new Font(family, 13f, FontStyle.Bold);
             bigFont = new Font(family, 16f, FontStyle.Bold);
             smallFont = new Font(family, 9f);
             supportFont = new Font(family, 11f, FontStyle.Bold);
@@ -367,7 +368,7 @@ namespace ForcedUpscaling
             using (Pen p = new Pen(Theme.Border)) g.DrawRectangle(p, 0, PanelTop, W - 1, H - PanelTop - 1);
             using (Brush b = new SolidBrush(isOn ? Theme.Accent : Theme.Off)) g.FillRectangle(b, 0, PanelTop, W, 3);
 
-            TextRenderer.DrawText(g, "Forced Upscaling", boldFont, new Rectangle(0, PanelTop + 3, W, 45), Theme.Text,
+            TextRenderer.DrawText(g, "Forced Supersampling", boldFont, new Rectangle(0, PanelTop + 3, W, 45), Theme.Text,
                 TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
 
             // status card
