@@ -242,7 +242,19 @@ namespace ForcedUpscaling
 
             string text = (selected >= 0 && selected < items.Length) ? items[selected] : "";
             Color fore = Enabled ? Theme.Text : Theme.Muted;
-            TextRenderer.DrawText(g, text, Font, new Rectangle(12, 0, Width - 38, Height), fore, Gfx.Line);
+
+            // a long name gets a slightly smaller font before it would be cut short
+            Rectangle area = new Rectangle(12, 0, Width - 38, Height);
+            Font font = Font;
+            float size = font.Size;
+            while (size > 8f && TextRenderer.MeasureText(g, text, font, new Size(int.MaxValue, Height), TextFormatFlags.NoPadding | TextFormatFlags.SingleLine).Width > area.Width)
+            {
+                size -= 0.5f;
+                if (font != Font) font.Dispose();
+                font = new Font(Font.FontFamily, size, Font.Style);
+            }
+            TextRenderer.DrawText(g, text, font, area, fore, Gfx.Line);
+            if (font != Font) font.Dispose();
 
             // little chevron
             int cx = Width - 18, cy = Height / 2;

@@ -7,8 +7,8 @@ namespace ForcedUpscaling
 {
     static class App
     {
-        public const string Version = "1.1.1";
-        public const string SupportUrl = "https://picpay.me/ilinzer";
+        public const string Version = "1.2.0";
+        public const string SupportUrl = "https://github.com/sponsors/Linzer-Cyberheart";
         public const string ChannelUrl = "https://www.youtube.com/@iLinzer?sub_confirmation=1";
         public const string RepoUrl = "https://github.com/Linzer-Cyberheart/ForcedUpscaling";
 

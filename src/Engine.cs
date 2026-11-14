@@ -1,11 +1,61 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace ForcedUpscaling
 {
+    // Tells whether a full screen window (a game) is in front on a monitor.
+    static class Foreground
+    {
+        [StructLayout(LayoutKind.Sequential)]
+        struct RECT { public int Left, Top, Right, Bottom; }
+
+        [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll")] static extern bool GetWindowRect(IntPtr window, out RECT rect);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetClassNameW(IntPtr window, StringBuilder name, int max);
+        [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint pid);
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongW")] static extern int GetWindowLong(IntPtr window, int index);
+
+        const int Style = -16;
+        const int Caption = 0xC00000;
+
+        // Borderless and at least as big as the monitor. The desktop, the taskbar and
+        // this program's own windows do not count.
+        public static bool CoversMonitor(string device)
+        {
+            try
+            {
+                IntPtr h = GetForegroundWindow();
+                if (h == IntPtr.Zero) return false;
+
+                uint pid;
+                GetWindowThreadProcessId(h, out pid);
+                if (pid == (uint)Process.GetCurrentProcess().Id) return false;
+
+                StringBuilder cls = new StringBuilder(64);
+                GetClassNameW(h, cls, cls.Capacity);
+                string c = cls.ToString();
+                if (c == "Progman" || c == "WorkerW" || c == "Shell_TrayWnd" || c == "Shell_SecondaryTrayWnd") return false;
+                if ((GetWindowLong(h, Style) & Caption) == Caption) return false;   // a normal window, even if maximized
+
+                Rectangle b = Screen.PrimaryScreen.Bounds;
+                foreach (Screen s in Screen.AllScreens)
+                    if (s.DeviceName == device) b = s.Bounds;
+
+                RECT r;
+                if (!GetWindowRect(h, out r)) return false;
+                return r.Left <= b.Left + 2 && r.Top <= b.Top + 2 && r.Right >= b.Right - 2 && r.Bottom >= b.Bottom - 2;
+            }
+            catch (Exception ex) { Log.Write(ex); return false; }
+        }
+    }
+
     // Holds the state shared by the tray menu and the window: which resolution
     // is selected, whether it is on, and does the actual switching.
     class Engine
@@ -27,6 +77,11 @@ namespace ForcedUpscaling
         bool busy;
         string lastState = "";
 
+        // What the user last asked for. When something else (a game that exits or is minimized)
+        // drops the mode, it is put back as long as this says "on".
+        bool wanted;
+        int missedPolls;
+
         public int Width { get; private set; }
         public int Height { get; private set; }
         public int ScalePercent { get; private set; }
@@ -47,15 +102,31 @@ namespace ForcedUpscaling
             if (device != null && !IsOn) RestoreScale();
 
             lastState = StateKey();
+            wanted = device != null && IsOn;
             poll.Interval = 2000;
             poll.Tick += delegate
             {
                 string now = StateKey();
                 if (now != lastState) { lastState = now; Raise(); }
+                KeepOn();
             };
             poll.Start();
         }
 
+        // The mode is only dropped by the user or by us. If a game that was on screen exits or is
+        // minimized, Windows resets the display; put it back after a couple of polls, and never
+        // while a full screen window is in front, because then that game owns the display mode.
+        void KeepOn()
+        {
+            if (!wanted || busy || device == null) { missedPolls = 0; return; }
+            if (IsOn) { missedPolls = 0; return; }
+            if (++missedPolls < 2) return;
+            if (Foreground.CoversMonitor(device)) return;
+            missedPolls = 0;
+            Run(delegate { DoTurnOn(true); });
+        }
+
+        public Settings Store { get { return settings; } }
         public bool HasDisplay { get { return device != null; } }
         public bool Busy { get { return busy; } }
         public string Device { get { return device; } }
@@ -127,11 +198,13 @@ namespace ForcedUpscaling
 
         public void TurnOn()
         {
-            Run(delegate { DoTurnOn(); });
+            wanted = true;
+            Run(delegate { DoTurnOn(false); });
         }
 
         public void TurnOff(bool announce)
         {
+            wanted = false;
             Run(delegate { DoTurnOff(announce); });
         }
 
@@ -142,7 +215,7 @@ namespace ForcedUpscaling
             settings.Set("w", width.ToString());
             settings.Set("h", height.ToString());
             if (IsOn)
-                Run(delegate { DoTurnOff(false); DoTurnOn(); });
+                Run(delegate { DoTurnOff(false); DoTurnOn(false); });
             else
                 Raise();
         }
@@ -160,6 +233,7 @@ namespace ForcedUpscaling
         public void SetMonitor(string name)
         {
             if (name == device || busy) return;
+            wanted = false;
             if (IsOn)
                 Run(delegate
                 {
@@ -196,7 +270,7 @@ namespace ForcedUpscaling
             }
         }
 
-        void DoTurnOn()
+        void DoTurnOn(bool quiet)
         {
             VideoMode saved = Display.Saved(device);
             int min, current, max;
@@ -205,7 +279,7 @@ namespace ForcedUpscaling
             int code = Display.Apply(device, Width, Height, saved.Hz);
             if (code != 0)
             {
-                Tell(Loc.T("fail_title"), Loc.F("fail", Width, Height, code), true);
+                if (!quiet) Tell(Loc.T("fail_title"), Loc.F("fail", Width, Height, code), true);
                 return;
             }
 
@@ -216,7 +290,7 @@ namespace ForcedUpscaling
                 settings.Set("pendingDevice", device);
             }
             if (ScalePercent != 0) ApplyScale();
-            Tell(Loc.T("on_title"), Loc.F("on_text", Width, Height), false);
+            if (!quiet) Tell(Loc.T("on_title"), Loc.F("on_text", Width, Height), false);
         }
 
         void DoTurnOff(bool announce)

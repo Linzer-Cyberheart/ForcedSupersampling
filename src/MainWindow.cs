@@ -12,14 +12,14 @@ namespace ForcedUpscaling
     class MainWindow : Form
     {
         const int W = 384;
-        const int H = 534;
         const int PanelTop = 70;
         const int Pad = 24;
         const int CardTop = 130;
         const int CardHeight = 76;
         const int RowsTop = 230;
         const int RowGap = 44;
-        const int DividerY = 462;
+        const int FooterGap = 12;      // last row to the divider
+        const int FooterHeight = 72;   // divider to the bottom edge
         const int LabelWidth = 146;
         const int SelectWidth = 186;
 
@@ -37,7 +37,9 @@ namespace ForcedUpscaling
         readonly SelectBox monitorBox;
         readonly SelectBox resBox;
         readonly SelectBox scaleBox;
+        readonly SelectBox gameBox;
         readonly SelectBox langBox;
+        readonly List<SelectBox> optionBoxes = new List<SelectBox>();
         readonly CaptionButton minButton;
         readonly CaptionButton closeButton;
         readonly TextLink repoLink;
@@ -51,10 +53,14 @@ namespace ForcedUpscaling
         List<VideoMode> modes = new List<VideoMode>();
         VideoMode now = new VideoMode();
         bool isOn;
+        GameProfile profile;   // the game picked in the list, null for the generic mode
+        int H, dividerY;
 
         public MainWindow(Engine engine)
         {
             this.engine = engine;
+            profile = FindProfile(engine.Store.Get("game", ""));
+            ComputeHeight();
 
             FormBorderStyle = FormBorderStyle.None;
             StartPosition = FormStartPosition.CenterScreen;
@@ -83,13 +89,14 @@ namespace ForcedUpscaling
 
             startup = new ToggleSwitch(48, 26);
             startup.BackColor = Theme.Window;
-            startup.Location = new Point(W - Pad - 48, RowsTop + 4 * RowGap + 4);
+            startup.Left = W - Pad - 48;
             startup.Checked = Autostart.IsOn;
 
-            monitorBox = NewSelect(0);
-            resBox = NewSelect(1);
-            scaleBox = NewSelect(2);
-            langBox = NewSelect(3);
+            monitorBox = NewSelect();
+            resBox = NewSelect();
+            scaleBox = NewSelect();
+            gameBox = NewSelect();
+            langBox = NewSelect();
 
             minButton = new CaptionButton(CaptionKind.Minimize);
             minButton.Location = new Point(W - 1 - 92, PanelTop + 3);
@@ -99,7 +106,7 @@ namespace ForcedUpscaling
             repoLink = new TextLink();
             byLink = new TextLink();
 
-            Controls.AddRange(new Control[] { minButton, closeButton, power, startup, monitorBox, resBox, scaleBox, langBox, support, repoLink, byLink, mascot });
+            Controls.AddRange(new Control[] { minButton, closeButton, power, startup, monitorBox, resBox, scaleBox, gameBox, langBox, support, repoLink, byLink, mascot });
 
             power.UserToggled += delegate { engine.Toggle(); };
             startup.UserToggled += delegate { Autostart.Set(startup.Checked); };
@@ -114,6 +121,7 @@ namespace ForcedUpscaling
                 if (i >= 0 && i < modes.Count) engine.SetResolution(modes[i].Width, modes[i].Height);
             };
             scaleBox.SelectionChanged += delegate { engine.SetScale(Engine.ScaleChoices[scaleBox.SelectedIndex]); };
+            gameBox.SelectionChanged += delegate { ChooseGame(gameBox.SelectedIndex); };
             langBox.SelectionChanged += delegate { engine.SetLanguage(Loc.Codes[langBox.SelectedIndex]); };
             support.Click += delegate { App.Open(App.SupportUrl); };
             repoLink.Click += delegate { App.Open(App.RepoUrl); };
@@ -128,12 +136,108 @@ namespace ForcedUpscaling
             RefreshState();
         }
 
-        SelectBox NewSelect(int row)
+        // rows from the top: monitor, resolution, scale, game, the game's options, language, autostart
+        int OptionCount { get { return profile == null ? 0 : profile.Options.Length; } }
+
+        static int RowY(int row) { return RowsTop + row * RowGap; }
+
+        static GameProfile FindProfile(string id)
+        {
+            foreach (GameProfile p in Games.All) if (p.Id == id) return p;
+            return null;
+        }
+
+        void ComputeHeight()
+        {
+            int rows = 6 + OptionCount;
+            dividerY = RowY(rows) + FooterGap;
+            H = dividerY + FooterHeight;
+        }
+
+        SelectBox NewSelect()
         {
             SelectBox box = new SelectBox();
             box.BackColor = Theme.Window;
-            box.Bounds = new Rectangle(W - Pad - SelectWidth, RowsTop + row * RowGap, SelectWidth, 34);
+            box.Size = new Size(SelectWidth, 34);
+            box.Left = W - Pad - SelectWidth;
             return box;
+        }
+
+        void PlaceControls()
+        {
+            int options = OptionCount;
+            monitorBox.Top = RowY(0);
+            resBox.Top = RowY(1);
+            scaleBox.Top = RowY(2);
+            gameBox.Top = RowY(3);
+            for (int i = 0; i < optionBoxes.Count; i++) optionBoxes[i].Top = RowY(4 + i);
+            langBox.Top = RowY(4 + options);
+            startup.Top = RowY(5 + options) + 4;
+
+            // the digger stands on the bottom edge of the window
+            support.Location = new Point(Pad - 18, H - 1 - support.Height);
+            repoLink.Location = new Point(W - Pad - repoLink.Width, dividerY + 46);
+            byLink.Location = new Point(W - Pad - byLink.Width, dividerY + 23);
+        }
+
+        void FillGames()
+        {
+            string[] items = new string[Games.All.Length + 1];
+            items[0] = Loc.T("game_all");
+            int selected = 0;
+            for (int i = 0; i < Games.All.Length; i++)
+            {
+                items[i + 1] = Games.All[i].Name;
+                if (Games.All[i] == profile) selected = i + 1;
+            }
+            gameBox.SetItems(items, selected);
+        }
+
+        // One drop-down per option of the picked game, rebuilt when the game changes.
+        void BuildOptions()
+        {
+            foreach (SelectBox old in optionBoxes)
+            {
+                Controls.Remove(old);
+                old.Dispose();
+            }
+            optionBoxes.Clear();
+            if (profile == null) return;
+
+            foreach (GameOption option in profile.Options)
+            {
+                GameOption opt = option;
+                GameProfile owner = profile;
+                SelectBox box = NewSelect();
+                box.Font = textFont;
+                box.SelectionChanged += delegate { engine.Store.Set(owner.SettingKey(opt), box.SelectedIndex.ToString()); };
+                Controls.Add(box);
+                optionBoxes.Add(box);
+            }
+            FillOptions();
+        }
+
+        void FillOptions()
+        {
+            for (int i = 0; i < optionBoxes.Count; i++)
+            {
+                GameOption option = profile.Options[i];
+                string[] items = new string[option.ChoiceKeys.Length];
+                for (int j = 0; j < items.Length; j++) items[j] = Loc.T(option.ChoiceKeys[j]);
+                int saved = engine.Store.GetInt(profile.SettingKey(option), option.Default);
+                optionBoxes[i].SetItems(items, saved < 0 || saved >= items.Length ? option.Default : saved);
+            }
+        }
+
+        void ChooseGame(int index)
+        {
+            profile = index <= 0 ? null : Games.All[index - 1];
+            engine.Store.Set("game", profile == null ? "" : profile.Id);
+            BuildOptions();
+            ComputeHeight();
+            ClientSize = new Size(W, H);
+            PlaceControls();
+            Invalidate();
         }
 
         protected override CreateParams CreateParams
@@ -161,17 +265,14 @@ namespace ForcedUpscaling
             smallFont = new Font(family, 9f);
             supportFont = new Font(family, 11f, FontStyle.Bold);
 
-            monitorBox.Font = resBox.Font = scaleBox.Font = langBox.Font = textFont;
+            monitorBox.Font = resBox.Font = scaleBox.Font = gameBox.Font = langBox.Font = textFont;
+            foreach (SelectBox box in optionBoxes) box.Font = textFont;
             repoLink.Font = byLink.Font = smallFont;
             support.Font = supportFont;
 
-            // the digger stands on the bottom edge of the window
             support.Label = Loc.T("support").ToUpperInvariant();
-            support.Location = new Point(Pad - 18, H - 1 - support.Height);
             repoLink.SetText("GitHub  ·  v" + App.Version);
-            repoLink.Location = new Point(W - Pad - repoLink.Width, DividerY + 46);
             byLink.SetText(Loc.T("by"));
-            byLink.Location = new Point(W - Pad - byLink.Width, DividerY + 23);
 
             tips.SetToolTip(minButton, Loc.T("minimize"));
             tips.SetToolTip(closeButton, Loc.T("close"));
@@ -180,6 +281,13 @@ namespace ForcedUpscaling
             FillMonitors();
             FillScale();
             FillResolutions();
+            FillGames();
+            if (profile != null)
+            {
+                if (optionBoxes.Count == 0) BuildOptions();
+                else FillOptions();
+            }
+            PlaceControls();
 
             foreach (Font f in old) if (f != null) f.Dispose();
             Invalidate();
@@ -273,11 +381,15 @@ namespace ForcedUpscaling
             string info = engine.HasDisplay ? Loc.F("resolution", now.Width, now.Height, now.Hz) : Loc.T("no_monitor");
             TextRenderer.DrawText(g, info, smallFont, new Rectangle(card.X + 20, card.Y + 44, 232, 22), Theme.Muted, Gfx.Line);
 
-            string[] labels = { Loc.T("monitor"), Loc.T("res"), Loc.T("scale"), Loc.T("language"), Loc.T("autostart") };
-            for (int i = 0; i < labels.Length; i++)
-                TextRenderer.DrawText(g, labels[i], textFont, new Rectangle(Pad, RowsTop + i * RowGap, LabelWidth, 34), Theme.Text, Gfx.Line);
+            List<string> labels = new List<string> { Loc.T("monitor"), Loc.T("res"), Loc.T("scale"), Loc.T("game") };
+            if (profile != null)
+                foreach (GameOption option in profile.Options) labels.Add(Loc.T(option.LabelKey));
+            labels.Add(Loc.T("language"));
+            labels.Add(Loc.T("autostart"));
+            for (int i = 0; i < labels.Count; i++)
+                TextRenderer.DrawText(g, labels[i], textFont, new Rectangle(Pad, RowY(i), LabelWidth, 34), Theme.Text, Gfx.Line);
 
-            using (Pen p = new Pen(Theme.Border)) g.DrawLine(p, Pad, DividerY, W - Pad, DividerY);
+            using (Pen p = new Pen(Theme.Border)) g.DrawLine(p, Pad, dividerY, W - Pad, dividerY);
         }
 
         // no title bar, so dragging anywhere on the panel moves the window

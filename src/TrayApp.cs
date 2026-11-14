@@ -25,6 +25,7 @@ namespace ForcedUpscaling
         readonly SynchronizationContext ui;
         readonly Icon iconOn;
         readonly Icon iconOff;
+        readonly GameMods mods;
 
         ToolStripMenuItem miOpen, miInfo, miToggle, miMonitor, miRes, miScale, miAuto, miSupport, miExit;
         MainWindow window;
@@ -41,7 +42,7 @@ namespace ForcedUpscaling
 
             BuildMenu();
             tray.ContextMenuStrip = menu;
-            tray.DoubleClick += delegate { engine.Toggle(); };
+            tray.DoubleClick += delegate { ShowWindow(); };
             tray.Visible = true;
 
             engine.Changed += delegate { UpdateTray(); };
@@ -60,7 +61,10 @@ namespace ForcedUpscaling
             // keep the Run entry pointing at wherever the exe lives now
             if (Autostart.IsOn) Autostart.Set(true);
 
-            Application.ApplicationExit += delegate { engine.Shutdown(); };
+            mods = new GameMods(engine, settings);
+            mods.Start();
+
+            Application.ApplicationExit += delegate { mods.Stop(); engine.Shutdown(); };
             Microsoft.Win32.SystemEvents.SessionEnding += delegate { engine.Shutdown(); };
 
             UpdateTray();

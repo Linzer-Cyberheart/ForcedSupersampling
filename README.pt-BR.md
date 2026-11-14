@@ -69,10 +69,18 @@ Se o app mostrar "Nenhuma resolução DSR disponível", falta esse passo.
 
 ## Como usar
 
-- Dê dois cliques no ícone da bandeja para ligar ou desligar, ou clique com o botão direito para ver o menu
+- Dê dois cliques no ícone da bandeja para abrir a janela, ou clique com o botão direito para ver o menu (liga e desliga ali ou na janela)
+- Depois de ligar, ele fica ligado: se um jogo sair ou for minimizado e o Windows derrubar a resolução, o app a coloca de volta, exceto enquanto um jogo em tela cheia estiver na frente
 - A janela tem os mesmos controles, mais o monitor, a resolução, a escala do Windows e o idioma
 - Ligue **antes** de abrir o jogo. Jogos que usam o tamanho da área de trabalho leem esse valor quando abrem
 - Desligue quando terminar. Fechar o app também desliga
+
+## Correções para jogos específicos
+
+Alguns jogos precisam de mais que uma área de trabalho maior. Escolha o jogo em "Jogo" na janela. O app então corrige o jogo na memória quando ele abre, sem mudar nada no disco, então a conferência de arquivos do Steam continua feliz. O modo precisa estar ligado antes de abrir o jogo.
+
+- **Dynasty Warriors 8 Empires** e **Xtreme Legends**: só listam resoluções até 1920 x 1200, então o app coloca o tamanho da tela na lista e nos pontos do código que montam a tela. O Empires ainda ganha um ajuste de profundidade de campo (Normal, Fraco, Desligado).
+- **Onechanbara Z2: Chaos**: a janela já acompanha a área de trabalho, mas o jogo monta a cena em 1920 x 1080 e estica. O ajuste "Resolução interna", ligado por padrão, faz o jogo montar a cena no tamanho da tela.
 
 Sobre a escala do Windows: em 3840 x 2160 o Windows costuma escolher 150%. Jogos que não tratam DPI são desenhados em 1440p e esticados, o que anula o objetivo. Por isso o app coloca a escala em 100% enquanto está ligado e devolve depois. Dá para mudar isso na janela.
 
@@ -128,7 +136,7 @@ A troca usa `ChangeDisplaySettingsEx` sem a flag de atualizar o registro, então
 
 Feito por [iLinzer](https://www.youtube.com/@iLinzer?sub_confirmation=1). O mascote e os ícones são arte minha.
 
-Se o app te ajudou, você pode apoiar o projeto em [picpay.me/ilinzer](https://picpay.me/ilinzer).
+Se o app te ajudou, você pode apoiar o projeto pelo [GitHub Sponsors](https://github.com/sponsors/Linzer-Cyberheart), de qualquer lugar do mundo. Uma estrela no repositório também ajuda.
 
 ## Licença
 

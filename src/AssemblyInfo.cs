@@ -3,5 +3,5 @@ using System.Reflection;
 [assembly: AssemblyTitle("Forced Upscaling")]
 [assembly: AssemblyDescription("Render games above your monitor resolution with DSR, for any game, with one click.")]
 [assembly: AssemblyProduct("Forced Upscaling")]
-[assembly: AssemblyVersion("1.1.1.0")]
-[assembly: AssemblyFileVersion("1.1.1.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]

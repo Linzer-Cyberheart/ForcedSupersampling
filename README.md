@@ -69,10 +69,18 @@ If the app says "No DSR resolutions available", this is the step you're missing.
 
 ## Using it
 
-- Double-click the tray icon to turn it on or off, or right-click it for the menu
+- Double-click the tray icon to open the window, or right-click it for the menu (turn it on or off there or in the window)
+- Once you turn it on, it stays on: if a game exits or is minimized and Windows drops the resolution, the app puts it back, except while a full screen game is in front
 - The window has the same controls plus the monitor, the resolution, the Windows scale and the language
 - Turn it on **before** you start the game. Games that take the desktop size read it when they open
 - Turn it off when you're done. Closing the app also turns it off
+
+## Fixes for specific games
+
+Some games need more than a bigger desktop. Pick the game under "Game" in the window. The app then fixes it in memory when the game starts, and nothing on disk changes, so Steam's file check stays happy. The mode has to be on before the game opens.
+
+- **Dynasty Warriors 8 Empires** and **Xtreme Legends**: they only list resolutions up to 1920 x 1200, so the app adds the screen size to the list and to the places in the code that build the screen. Empires also gets a depth of field setting (Normal, Weak, Off).
+- **Onechanbara Z2: Chaos**: the window already follows the desktop, but the game builds the scene at 1920 x 1080 and stretches it. The "Internal resolution" setting, on by default, makes it build the scene at the screen size.
 
 About the Windows scale: at 3840 x 2160 Windows usually picks 150%. Games that don't handle DPI get drawn at 1440p and stretched, which defeats the point. So the app switches the scale to 100% while it's on and puts it back afterwards. You can change that in the window.
 
@@ -128,7 +136,7 @@ Switching uses `ChangeDisplaySettingsEx` without the update-registry flag, so th
 
 Made by [iLinzer](https://www.youtube.com/@iLinzer?sub_confirmation=1). The mascot and the icons are my own artwork.
 
-If the app helped you, you can support the project at [picpay.me/ilinzer](https://picpay.me/ilinzer).
+If the app helped you, you can support the project on [GitHub Sponsors](https://github.com/sponsors/Linzer-Cyberheart), from anywhere in the world. A star on the repository helps too.
 
 ## License
 
