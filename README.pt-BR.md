@@ -59,6 +59,12 @@ Desligado à esquerda, ligado à direita, no mesmo ponto do jogo.
 </p>
 
 <p align="center">
+  <img src="docs/compare/onechanbara-origin-3.jpg" width="880" alt="OneeChanbara Origin, ligado em cima e desligado embaixo">
+  <br>
+  <sub>OneeChanbara Origin, outra cena. Esta está dividida ao contrário: ligado em cima, desligado embaixo.</sub>
+</p>
+
+<p align="center">
   <img src="docs/compare/onechanbara-z2-chaos.jpg" width="880" alt="Onechanbara Z2: Chaos, desligado à esquerda e ligado à direita">
   <br>
   <sub>Onechanbara Z2: Chaos, com o ajuste "Resolução interna".</sub>

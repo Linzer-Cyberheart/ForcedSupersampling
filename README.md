@@ -59,6 +59,12 @@ Off on the left, on on the right, same spot in the game.
 </p>
 
 <p align="center">
+  <img src="docs/compare/onechanbara-origin-3.jpg" width="880" alt="OneeChanbara Origin, on at the top and off at the bottom">
+  <br>
+  <sub>OneeChanbara Origin, another scene. This one is split the other way: on at the top, off at the bottom.</sub>
+</p>
+
+<p align="center">
   <img src="docs/compare/onechanbara-z2-chaos.jpg" width="880" alt="Onechanbara Z2: Chaos, off on the left and on on the right">
   <br>
   <sub>Onechanbara Z2: Chaos, with the "Internal resolution" setting.</sub>
