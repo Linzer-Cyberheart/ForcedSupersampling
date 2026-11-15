@@ -104,6 +104,16 @@ Forced Supersampling was called Forced Upscaling until version 1.2.0. It is the 
 
 Windows SmartScreen may complain the first time, because the file isn't code signed. If you'd rather not trust a random exe, the source is short and `build.bat` builds it in a few seconds (see below).
 
+### Antivirus status (version 1.2.2)
+
+The exe is new and unsigned, so antivirus engines that judge unknown files by reputation can flag it. Where it stands, checked on 15 November 2026:
+
+- **VirusTotal:** [0 of 71 engines flag it](https://www.virustotal.com/gui/file/b98da0600372f8f9657e024fd38de84366aafc0119bfb1a5ee644c1063e5fd2c).
+- **Microsoft Defender:** on one PC it flagged this build as `Trojan:Script/Conteban.A!ml`, a machine learning detection, when it was downloaded and run. I believe it is a false positive and sent the file to Microsoft for analysis on 15 November 2026. I will update this section with the answer.
+- **SHA-256 of `ForcedSupersampling.exe` 1.2.2:** `b98da0600372f8f9657e024fd38de84366aafc0119bfb1a5ee644c1063e5fd2c`. Check yours against it.
+
+The source is public, and every release is built from it by GitHub Actions, so you can also build it yourself.
+
 ## Set up DSR first
 
 DSR has to be switched on in the NVIDIA Control Panel:
