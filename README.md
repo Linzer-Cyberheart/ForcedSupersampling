@@ -10,6 +10,12 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/Linzer-Cyberheart/ForcedSupersampling/releases/latest"><img alt="Download ForcedSupersampling.exe" src="https://img.shields.io/badge/Download-ForcedSupersampling.exe-2ea44f?style=for-the-badge&logo=windows"></a>
+  <br>
+  <sub>Click the button, then click <b>ForcedSupersampling.exe</b> under "Assets" on the page that opens. No installer: just run the file.</sub>
+</p>
+
+<p align="center">
   <a href="https://github.com/Linzer-Cyberheart/ForcedSupersampling/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/Linzer-Cyberheart/ForcedSupersampling"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/Linzer-Cyberheart/ForcedSupersampling"></a>
   <img alt="Windows" src="https://img.shields.io/badge/platform-Windows-0078D4">
