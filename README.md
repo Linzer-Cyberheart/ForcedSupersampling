@@ -67,7 +67,13 @@ Off on the left, on on the right, same spot in the game.
 <p align="center">
   <img src="docs/compare/onechanbara-z2-chaos.jpg" width="880" alt="Onechanbara Z2: Chaos, off on the left and on on the right">
   <br>
-  <sub>Onechanbara Z2: Chaos, with the "Internal resolution" setting.</sub>
+  <sub>Onechanbara Z2: Chaos, with the "Internal resolution" setting. A zoomed crop of the boots.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/compare/onechanbara-z2-chaos-2.jpg" width="880" alt="Onechanbara Z2: Chaos, full character, off on the left and on on the right">
+  <br>
+  <sub>Onechanbara Z2: Chaos, the full character in the same spot, zoomed 2.5x. On is the 4K frame reduced to 1080p, an approximation of what a 1080p monitor shows.</sub>
 </p>
 
 <p align="center">

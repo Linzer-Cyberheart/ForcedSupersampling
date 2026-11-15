@@ -67,7 +67,13 @@ Desligado à esquerda, ligado à direita, no mesmo ponto do jogo.
 <p align="center">
   <img src="docs/compare/onechanbara-z2-chaos.jpg" width="880" alt="Onechanbara Z2: Chaos, desligado à esquerda e ligado à direita">
   <br>
-  <sub>Onechanbara Z2: Chaos, com o ajuste "Resolução interna".</sub>
+  <sub>Onechanbara Z2: Chaos, com o ajuste "Resolução interna". Um recorte ampliado das botas.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/compare/onechanbara-z2-chaos-2.jpg" width="880" alt="Onechanbara Z2: Chaos, personagem inteira, desligado à esquerda e ligado à direita">
+  <br>
+  <sub>Onechanbara Z2: Chaos, a personagem inteira no mesmo ponto, ampliada 2,5x. Ligado é o quadro em 4K reduzido para 1080p, uma aproximação do que um monitor 1080p mostra.</sub>
 </p>
 
 <p align="center">
