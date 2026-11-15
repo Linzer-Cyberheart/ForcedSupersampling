@@ -162,13 +162,13 @@ Um pequeno arquivo de configuração em `%APPDATA%\ForcedUpscaling` e, se você 
 
 ## Compilar o código
 
-Basta o Windows. O compilador de C# que acompanha o .NET Framework 4 é suficiente, sem Visual Studio nem SDK.
+Basta o Windows e o [Build Tools for Visual Studio](https://visualstudio.microsoft.com/visual-cpp-build-tools/), que é gratuito (o compilador de C# vem com ele). Sem arquivo de projeto, sem SDK.
 
 ```
 build.bat
 ```
 
-O resultado é `bin\ForcedSupersampling.exe`, com os ícones e as animações embutidos.
+O resultado é `bin\ForcedSupersampling.exe`, com os ícones e as animações embutidos. O script acha o compilador sozinho, compila de forma determinística (o mesmo código sempre gera o mesmo exe), assina o assembly com a chave de strong name do repositório e gera x64. É essa combinação que mantém algumas heurísticas de antivírus quietas; sem o Build Tools o script recorre ao compilador antigo que vem com o Windows, que funciona mas é marcado.
 
 ## Como funciona
 

@@ -162,13 +162,13 @@ A small settings file in `%APPDATA%\ForcedUpscaling` and, if you enable it, a Ru
 
 ## Build from source
 
-You only need Windows. The C# compiler that ships with .NET Framework 4 is enough, no Visual Studio or SDK.
+You only need Windows and the free [Build Tools for Visual Studio](https://visualstudio.microsoft.com/visual-cpp-build-tools/) (the C# compiler that comes with them). No project file, no SDK.
 
 ```
 build.bat
 ```
 
-The result is `bin\ForcedSupersampling.exe`, with the icons and animations built into it.
+The result is `bin\ForcedSupersampling.exe`, with the icons and animations built into it. The script finds the compiler by itself, builds deterministically (the same source always gives the same exe), signs the assembly with the strong name key in the repository and targets x64. That combination is what keeps a few antivirus heuristics quiet; without the Build Tools the script falls back to the old compiler that ships with Windows, which works but gets flagged.
 
 ## How it works
 
